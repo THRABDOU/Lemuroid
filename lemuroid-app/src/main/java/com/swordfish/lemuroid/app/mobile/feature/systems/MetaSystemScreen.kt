@@ -42,7 +42,7 @@ private fun MetaSystemsScreen(
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        columns = GridCells.Adaptive(144.dp),
+        columns = GridCells.Adaptive(200.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
