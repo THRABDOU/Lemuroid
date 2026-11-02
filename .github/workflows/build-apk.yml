@@ -2,29 +2,14 @@ name: Build Lemuroid APK
 
 on:
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: 'Build Type'
-        required: true
-        default: 'release'
-        type: choice
-        options:
-          - 'release'
-          - 'debug'
-          - 'both'
   push:
     branches:
       - master
       - main
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/workflows/checkstyle.yml'
-      - '.github/workflows/publish.yml'
 
 jobs:
   build:
-    name: Build Lemuroid APK
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
@@ -56,28 +41,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build APKs
-        run: |
-          BUILD_TYPE="${{ github.event.inputs.build_type || 'release' }}"
-          echo "Selected build type: $BUILD_TYPE"
-          
-          if [ "$BUILD_TYPE" = "release" ]; then
-            ./gradlew assembleFreeDynamicRelease assembleFreeBundleRelease --stacktrace
-          elif [ "$BUILD_TYPE" = "debug" ]; then
-            ./gradlew assembleFreeDynamicDebug assembleFreeBundleDebug --stacktrace
-          else
-            ./gradlew assembleFree --stacktrace
-          fi
+      - name: Build Free Dynamic Release APK
+        run: ./gradlew assembleFreeDynamicRelease --stacktrace
 
-      - name: Organize output APKs
-        run: |
-          mkdir -p output-apks
-          find lemuroid-app/build/outputs/apk/ -name "*.apk" -exec cp {} output-apks/ \;
-          ls -la output-apks/
-
-      - name: Upload APKs Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Lemuroid-APKs
-          path: output-apks/*.apk
+          name: Lemuroid-Release-APK
+          path: lemuroid-app/build/outputs/apk/freeDynamic/release/*.apk
           retention-days: 14
